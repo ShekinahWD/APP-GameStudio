@@ -18,6 +18,12 @@ try {
   const site = loadJson('site.json');
   const { games } = loadJson('games.json');
   if (!site.studioName || !site.shortName || !site.headline) fail('site.json needs a studioName, shortName, and headline.');
+  try {
+    const siteUrl = new URL(site.siteUrl);
+    if (siteUrl.protocol !== 'https:' || siteUrl.search || siteUrl.hash || !site.siteUrl.endsWith('/')) {
+      fail('site.json siteUrl must be an absolute HTTPS URL ending in / without query or hash.');
+    }
+  } catch { fail('site.json requires a valid siteUrl such as https://username.github.io/repository/.'); }
   if (!Array.isArray(games)) fail('games.json needs a games array.');
   if (Array.isArray(games)) {
     const ids = new Set();

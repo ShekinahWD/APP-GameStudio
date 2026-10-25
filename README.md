@@ -6,14 +6,14 @@ Light, cheerful, responsive **static website** using the official Shekinah logo 
 
 ### Add or edit a game — `public/data/games.json`
 
-Each object in the `games` array corresponds to one game card. **Its order in the JSON determines its order on the website.** Copy an existing entry to add a game; do not reuse another game's `id`.
+Each object in the `games` array corresponds to one game card **and an automatically generated SEO game page**. **Its order in the JSON determines its order on the homepage.** Copy an existing entry to add a game; do not reuse another game's `id`.
 
 | Field | What it does |
 |---|---|
 | `id` | Permanent, unique identifier, lowercase letters/numbers/hyphens |
 | `title`, `description`, `genre` | Visible game information |
 | `tags` | Up to three short labels (optional) |
-| `visible` | `true` shows the game; `false` hides it |
+| `visible` | `true` shows the game and creates an indexable page; `false` excludes it from generated pages and sitemap |
 | `status` | `released` or `open-beta` (only open beta shows a badge) |
 | `icon` | Game icon URL or local image path under `public/` |
 | `cover` | Wide promotional art URL or local image path under `public/` |
@@ -28,7 +28,7 @@ The initial five visible games are Growing Kingdom, LootFarmer, Everfort, Hunter
 
 ### Edit studio copy, social links, and storefronts — `public/data/site.json`
 
-Update the studio copy, `headline`, `headlineHighlight`, `intro`, `about`, and `principles` here.
+Update `siteUrl` (the exact public homepage address, including the trailing `/`), studio copy, `headline`, `headlineHighlight`, `intro`, `about`, and `principles` here.
 
 - `social.discord`, `social.instagram`, `social.tiktok`, `social.youtube`, `social.facebook`: individual community accounts.
 - `contactEmail`: contact address.
@@ -69,7 +69,8 @@ Open the local URL printed by Vite. The development server automatically reloads
 
 ```bash
 npm run validate    # check JSON and TypeScript
-npm run build       # create deployable dist/
+npm run build       # create deployable dist/ including SEO pages and sitemap
+npm run validate:seo  # inspect generated SEO files (run after build)
 npm run preview     # preview production build
 ```
 
@@ -88,5 +89,46 @@ npm run preview     # preview production build
 - No featured or spotlight fields, game-of-the-week sections, news feed, or other manually refreshed material.
 - Don't fill unused URLs with `#`, the word `false`, or dummy placeholder URLs: use `""`.
 - When using a local image path in JSON, omit `public/` and the leading slash.
-- Social preview meta image is relative; on some social platforms a custom domain and absolute `og:image` URL improve preview support.
+- All Open Graph and Twitter image links are absolute after `npm run build`, based on `siteUrl`.
 - All JSON text displayed to visitors is HTML-escaped; outgoing links are checked for supported schemes.
+
+
+## SEO and Google Search Console (free)
+
+The published site is **statically pre-rendered at build time** using the same component templates as the development site. Search engines receive all visible game cards, store links, and studio text in the initial HTML without needing to execute JavaScript. Individual pages automatically exist at `games/<id>/` for every `"visible": true` game.
+
+`npm run build` produces:
+
+- `dist/index.html` — pre-rendered homepage with canonical, social preview metadata, and `Organization`, `WebSite`, and `ItemList` JSON-LD.
+- `dist/games/<id>/index.html` — separate branded detail page for each visible game, with distinct title, meta description, canonical, social previews, `VideoGame` and breadcrumb structured data.
+- `dist/sitemap.xml` — automatically lists the homepage and **visible games only** (no manually entered dates).
+- `dist/robots.txt` — permissive crawl policy and sitemap reference.
+
+All these files are deployed by the existing GitHub Actions workflow. **Do not edit `dist/` manually.** Editing JSON and pushing to `main` is sufficient. Hidden games are excluded from page generation and the sitemap. Keep game IDs stable after publishing: changing an ID changes the game's page URL.
+
+### Google Search Console setup
+
+1. Deploy the site successfully and verify the homepage and a game detail page load.
+2. Open [Google Search Console](https://search.google.com/search-console).
+3. Add a **URL prefix** property (not a domain property) for:
+
+   `https://shekinahwd.github.io/APP-GameStudio/`
+
+4. Verify ownership using a method Google offers you. The **HTML tag method** works by copying the exact verification meta tag Google gives you into the `<head>` of the repository's `index.html` (outside the `SEO_META` placeholder), committing, and deploying. Alternatively, place Google's verification HTML file at `public/<google-provided-filename>.html`, then push and verify. Do not invent a verification code.
+5. In Search Console → **Sitemaps**, submit this URL:
+
+   `https://shekinahwd.github.io/APP-GameStudio/sitemap.xml`
+
+6. Use **URL Inspection** to request indexing of the homepage and several game pages if useful; indexing and ranking aren't guaranteed or instantaneous.
+
+**GitHub Pages note:** On GitHub *project pages*, `/APP-GameStudio/robots.txt` is **not** the authoritative robots.txt for `shekinahwd.github.io` because crawler robots rules are read from the **host root** (`https://shekinahwd.github.io/robots.txt`). The project-level file is still generated for compatibility with future custom domains, but **submit the sitemap directly in Search Console**. There is no need for a paid domain, Search Console subscription, or paid SEO tool.
+
+### If you change domains or repository names
+
+Update `siteUrl` in `public/data/site.json` to match the final public URL **with a trailing slash**, then deploy again. Canonical URLs, sitemap URLs, social images, and structured-data links will automatically follow it. Incorrect `siteUrl` values can cause search engines to index the wrong addresses.
+
+### Verification
+
+`npm run validate` checks JSON and TypeScript. `npm run build` also checks that all visible-game pages, canonical URLs, structured data, stylesheets, and sitemap entries are generated as expected (`scripts/check-seo.mjs`). Preview the production output with `npm run preview`.
+
+SEO helps search engines understand and discover the studio and its games. Google does not guarantee rich-result enhancements for `VideoGame` markup, and better ranking still depends on content quality, links, and search demand.
