@@ -1,0 +1,129 @@
+{
+  "games": [
+    {
+      "id": "growing-kingdom",
+      "title": "Growing Kingdom: RTS",
+      "description": "Build a thriving kingdom, command your troops, defend your castle, and conquer rival lands in this incremental real-time strategy adventure.",
+      "genre": "Strategy · Kingdom Builder",
+      "tags": [
+        "Strategy",
+        "Incremental",
+        "RTS"
+      ],
+      "visible": true,
+      "status": "released",
+      "theme": "meadow",
+      "icon": "images/games/growing-kingdom-icon.webp",
+      "cover": "https://play-lh.googleusercontent.com/Bl2X0uzv5P3jX1EZOt99QZb4sdG4BNTHxaptfEpH3ZCxUo0UVbWlWMh5hNsEuZYKrjeWJNOyMp1fnQMMAGqGmlY=w526-h296",
+      "stores": {
+        "playStore": "https://play.google.com/store/apps/details?id=com.shekinahwelefuldesigns.growingkingdom",
+        "steam": "",
+        "itch": ""
+      }
+    },
+    {
+      "id": "lootfarmer",
+      "title": "LootFarmer: Idle RPG",
+      "description": "Hunt enemies, collect loot, merge and evolve powerful gear, and chase new upgrades across a world of changing seasons.",
+      "genre": "Idle RPG · Loot & Progression",
+      "tags": [
+        "Idle RPG",
+        "Loot",
+        "Progression"
+      ],
+      "visible": true,
+      "status": "released",
+      "theme": "frost",
+      "icon": "",
+      "cover": "",
+      "stores": {
+        "playStore": "https://play.google.com/store/apps/details?id=com.shekinahwelefuldesigns.lootfarmeridlerpg",
+        "steam": "",
+        "itch": ""
+      }
+    },
+    {
+      "id": "everfort",
+      "title": "Everfort: Idle Castle Defense",
+      "description": "Hold back endless enemy waves, grow your defenses, and discover permanent upgrades with every satisfying new run.",
+      "genre": "Idle · Castle Defense",
+      "tags": [
+        "Idle",
+        "Strategy",
+        "Defense"
+      ],
+      "visible": true,
+      "status": "released",
+      "theme": "gold",
+      "icon": "images/games/everfort-icon.webp",
+      "cover": "https://play-lh.googleusercontent.com/oRFaIUxg7boIFphSKF95EquVQQvXC9Q-8dIyL11aqKh4FhQSbgV-FWKABzPeQbs7NjNh2tTmm7Q6UOhH5w38Hw=w526-h296",
+      "stores": {
+        "playStore": "https://play.google.com/store/apps/details?id=com.shekinahwelefuldesigns.everfort",
+        "steam": "",
+        "itch": ""
+      }
+    },
+    {
+      "id": "hunter-clicker",
+      "title": "To Idle Or Not: Hunter Clicker",
+      "description": "Slay monsters, gather powerful equipment, evolve your pets, and tackle bosses in a story-driven incremental RPG.",
+      "genre": "Idle RPG · Adventure",
+      "tags": [
+        "Idle RPG",
+        "Adventure",
+        "Incremental"
+      ],
+      "visible": true,
+      "status": "released",
+      "theme": "ember",
+      "icon": "images/games/hunter-clicker-icon.webp",
+      "cover": "https://play-lh.googleusercontent.com/hRPvG6KsNWUpMzUKZlKGOmJ8GlE-UV2Xeem_0H1ShduiIawF-NND61PhRh3RbhcgNv_NKCvJwmyJKD2tzazV=w526-h296",
+      "stores": {
+        "playStore": "https://play.google.com/store/apps/details?id=com.ShekinahWelefulDesigns.ToIdleOrNotHunterClicker",
+        "steam": "",
+        "itch": ""
+      }
+    },
+    {
+      "id": "hopeless-fort",
+      "title": "To Idle Or Not: Hopeless Fort",
+      "description": "Build your last line of defense, upgrade deadly turrets, and survive wave after wave in this tactical idle tower defense.",
+      "genre": "Idle · Tower Defense",
+      "tags": [
+        "Tower Defense",
+        "Idle",
+        "Survival"
+      ],
+      "visible": true,
+      "status": "open-beta",
+      "theme": "steel",
+      "icon": "images/games/hopeless-fort-icon.webp",
+      "cover": "https://play-lh.googleusercontent.com/MtOQ3LTZslGw2t2VYvR4Bz4Lb7l3A14PZo6iCli2tI3jt8FdTHBy0lIaN769F0VrZU9Ug-XJSQUW69jxEQ1pug=w526-h296",
+      "stores": {
+        "playStore": "https://play.google.com/store/apps/details?id=com.ShekinahWelefulDesigns.HopelessFort",
+        "steam": "",
+        "itch": ""
+      }
+    },
+    {
+      "id": "miner-hero",
+      "title": "To Idle Or Not: Miner Hero",
+      "description": "An incremental adventure from our earlier game collection.",
+      "genre": "Idle · Incremental",
+      "tags": [
+        "Idle",
+        "Incremental"
+      ],
+      "visible": false,
+      "status": "released",
+      "theme": "gold",
+      "icon": "",
+      "cover": "",
+      "stores": {
+        "playStore": "",
+        "steam": "",
+        "itch": ""
+      }
+    }
+  ]
+}

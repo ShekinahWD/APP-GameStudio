@@ -1,0 +1,39 @@
+{
+  "studioName": "Shekinah Weleful Designs",
+  "shortName": "Shekinah Games",
+  "heroEyebrow": "INDEPENDENT GAME STUDIO",
+  "headline": "Games made to feel good.",
+  "intro": "Dedicated to creating feel-good content, focusing on games that avoid forced ads, heavy monetization, and a pay-to-win model!",
+  "about": "We believe games should be fun first. That means making room for satisfying progress and memorable adventures without aggressive monetization getting in the way.",
+  "contactEmail": "shekinahwd@gmail.com",
+  "social": {
+    "discord": "https://discord.gg/JKjeP6PDAU",
+    "instagram": "https://www.instagram.com/shekinah_weleful_designs/",
+    "tiktok": "https://www.tiktok.com/@shekinah.weleful",
+    "youtube": "https://www.youtube.com/@shekinahwelefuldesigns8094",
+    "facebook": ""
+  },
+  "storefronts": {
+    "playStore": "https://play.google.com/store/apps/dev?id=5660159195287329898",
+    "steam": "https://store.steampowered.com/search/?developer=Shekinah%20Weleful%20Designs",
+    "itch": "https://shekinawd.itch.io/"
+  },
+  "headlineHighlight": "feel good.",
+  "principles": [
+    {
+      "icon": "heart",
+      "title": "No forced ads",
+      "description": "Enjoy the adventure without being interrupted by ads you have to watch."
+    },
+    {
+      "icon": "shield",
+      "title": "No pay-to-win",
+      "description": "Progress should feel earned, not locked behind a purchase."
+    },
+    {
+      "icon": "smile",
+      "title": "Fun over monetization",
+      "description": "Thoughtful game experiences come before aggressive sales tactics."
+    }
+  ]
+}
