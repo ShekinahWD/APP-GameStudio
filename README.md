@@ -1,6 +1,6 @@
 # Shekinah Weleful Designs — Feel-good games website
 
-Light, cheerful, responsive **static website** using the official Shekinah logo and brand palette. It has **no database, no backend, and no manually updated spotlight**. GitHub Actions builds and deploys it to GitHub Pages.
+Light, cheerful, responsive **static website** using the official Shekinah logo and brand palette. It has **no database or backend**. The optional pinned promotional game is set through JSON and does not rotate or require ongoing updates. GitHub Actions builds and deploys it to GitHub Pages.
 
 ## Maintaining your website
 
@@ -14,7 +14,10 @@ Each object in the `games` array corresponds to one game card **and an automatic
 | `title`, `description`, `genre` | Visible game information |
 | `tags` | Up to three short labels (optional) |
 | `visible` | `true` shows the game and creates an indexable page; `false` excludes it from generated pages and sitemap |
-| `status` | `released` or `open-beta` (only open beta shows a badge) |
+| `status` | `released`, `open-beta`, or `coming-soon` |
+| `featured` | Optional `true` to place **one** visible game in a full-width promotional row above the other cards; remove/set `false` to return it to the normal grid |
+| `releaseDate` | Optional release text (for example, `March 2027`), shown for the featured upcoming game and on its detail page |
+| `promoCover` | Optional larger horizontal image for the featured row (falls back to `cover` if empty) |
 | `icon` | Game icon URL or local image path under `public/` |
 | `cover` | Wide promotional art URL or local image path under `public/` |
 | `theme` | Fallback cover color: `meadow`, `frost`, `gold`, `ember`, or `steel` |
@@ -24,7 +27,7 @@ Each object in the `games` array corresponds to one game card **and an automatic
 
 **Platform buttons appear automatically** whenever the platform has a valid nonempty `http://` or `https://` URL. If the URL is `""` or the property is absent, that store isn't shown. You can add one, two, or all three links for each game. No boolean flags are needed.
 
-The initial five visible games are Growing Kingdom, LootFarmer, Everfort, Hunter Clicker, and Hopeless Fort (**Open Beta**). Miner Hero remains in JSON but is hidden.
+The homepage currently shows **TION: Hero Awakening — Idle RPG** as the full-width upcoming Steam game with a Wishlist button, followed by the original five games: Growing Kingdom, LootFarmer, Everfort, Hunter Clicker, and Hopeless Fort (**Open Beta**). Miner Hero remains in JSON but is hidden. All six visible games get SEO detail pages; the featured game is not duplicated in the normal grid.
 
 ### Edit studio copy, social links, and storefronts — `public/data/site.json`
 
@@ -47,6 +50,8 @@ The site uses your supplied **official** Shekinah graphics (rather than recreati
 - Site icons and social share image: `public/favicon.png`, `public/apple-touch-icon.png`, `public/social-preview.png`.
 
 Brand colors used: `#2E3A98`, `#05F0F5`, `#29A3DD`, `#2A81AC` from the supplied brand guide. The logo typeface remains inside the supplied images; it is not redistributed as a font file.
+
+The Steam game uses **locally optimized WebP versions of the supplied capsule artwork** (`tion-hero-awakening-promo.webp` and `tion-hero-awakening-cover.webp`). No Steam hotlink is required. The Wishlist button navigates to the Steam listing; players then wishlist through Steam itself.
 
 For reliable game pictures, eventually place game images in `public/images/games/`, e.g.:
 
@@ -86,7 +91,7 @@ npm run preview     # preview production build
 
 ## Maintenance notes
 
-- No featured or spotlight fields, game-of-the-week sections, news feed, or other manually refreshed material.
+- To change the promoted game, move `featured:true` to one other visible game in `games.json` (or set it to `false` to disable the promotional row). No game-of-the-week, rotation, news feed, or timed updates.
 - Don't fill unused URLs with `#`, the word `false`, or dummy placeholder URLs: use `""`.
 - When using a local image path in JSON, omit `public/` and the leading slash.
 - All Open Graph and Twitter image links are absolute after `npm run build`, based on `siteUrl`.

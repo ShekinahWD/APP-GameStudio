@@ -27,6 +27,7 @@ try {
   if (!Array.isArray(games)) fail('games.json needs a games array.');
   if (Array.isArray(games)) {
     const ids = new Set();
+    let featuredCount = 0;
     for (const [index, game] of games.entries()) {
       const path = `games[${index}]`;
       if (!game?.id || !/^[a-z0-9-]+$/.test(game.id)) fail(`${path}.id must contain only lowercase letters, numbers and hyphens.`);
@@ -34,9 +35,16 @@ try {
       ids.add(game.id);
       if (!game.title || !game.description || !game.genre) fail(`${path} is missing title, description or genre.`);
       if (typeof game.visible !== 'boolean') fail(`${path}.visible must be true or false.`);
-      if (!['released', 'open-beta'].includes(game.status)) fail(`${path}.status must be released or open-beta.`);
+      if (!['released', 'open-beta', 'coming-soon'].includes(game.status)) fail(`${path}.status must be released, open-beta or coming-soon.`);
+      if (game.featured !== undefined && typeof game.featured !== 'boolean') fail(`${path}.featured must be true or false.`);
+      if (game.featured && game.visible) featuredCount++;
+      if (game.releaseDate !== undefined && typeof game.releaseDate !== 'string') fail(`${path}.releaseDate must be a string.`);
+      for (const field of ['icon', 'cover', 'promoCover']) {
+        if (game[field] !== undefined && typeof game[field] !== 'string') fail(`${path}.${field} must be an image URL or path.`);
+      }
       for (const platform of ['playStore', 'steam', 'itch']) validWebLink(game.stores?.[platform], `${path}.stores.${platform}`);
     }
+    if (featuredCount > 1) fail('Only one visible game can have featured:true.');
   }
   if (site.principles !== undefined) {
     if (!Array.isArray(site.principles)) fail('site.principles must be an array.');

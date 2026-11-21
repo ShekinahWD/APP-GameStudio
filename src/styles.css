@@ -134,6 +134,61 @@ h1, h2, h3 { font-family: 'Outfit', 'DM Sans', sans-serif; }
 .store-coming { font-size: 13px; color: var(--muted); font-weight: 700; padding: 12px 0; }
 .no-games { color: var(--muted); font-size: 17px; }
 
+/* Full-width promotional row; selected via featured:true in games.json. */
+.featured-game { position: relative; display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr); align-items: stretch; gap: 0; margin-bottom: 40px; overflow: hidden; border: 1px solid #d3e6f2; border-radius: 24px; background: linear-gradient(130deg, #fbfeff 0%, #f2f9ff 60%, #eaf9ff 100%); box-shadow: 0 17px 46px rgba(37,89,154,.11); }
+.featured-game::before { content: ''; position: absolute; z-index: 0; width: 320px; aspect-ratio: 1; right: -115px; top: -185px; border-radius: 50%; background: rgba(5,240,245,.08); pointer-events: none; }
+.featured-art { position: relative; display: block; overflow: hidden; min-width: 0; background: linear-gradient(140deg, #ffceaf, #964258); }
+.featured-cover { display: block; width: 100%; height: 100%; aspect-ratio: 1232 / 706; object-fit: cover; transition: transform .4s ease; }
+.featured-art:hover .featured-cover { transform: scale(1.025); }
+.featured-art-corner { position: absolute; right: 17px; bottom: 17px; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; color: #fff; background: rgba(20,30,87,.65); backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,.15); }
+.featured-art-corner svg { width: 17px; height: 17px; }
+.featured-copy { position: relative; z-index: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: clamp(22px, 3vw, 43px); }
+.featured-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 10.5px; font-weight: 900; letter-spacing: 2px; color: #246b9f; }
+.featured-pulse { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #1acfcf; box-shadow: 0 0 0 5px rgba(5,240,245,.16); }
+.featured-copy h3 { color: #1f2e7c; margin: 15px 0 15px; font-size: clamp(29px, 2.9vw, 41px); line-height: 1.11; letter-spacing: -1.25px; font-weight: 800; }
+.featured-copy h3 a:hover { color: #278ac6; }
+.featured-description { color: #526985; max-width: 520px; font-size: clamp(13px, 1.07vw, 15px); line-height: 1.75; margin: 0 0 17px; }
+.featured-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+.featured-release { display: inline-flex; align-items: center; gap: 7px; color: #315c91; font-size: 12px; font-weight: 800; }
+.featured-release svg { width: 17px; height: 17px; }
+.featured-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; width: 100%; margin-top: 24px; }
+.featured-wishlist { display: inline-flex; align-items: center; justify-content: center; gap: 11px; min-height: 50px; padding: 14px 21px; border-radius: 12px; color: #fff; background: var(--indigo); box-shadow: 0 11px 23px rgba(46,58,152,.18); font-size: 14px; font-weight: 800; transition: background .2s, transform .2s; }
+.featured-wishlist:hover { background: #203080; transform: translateY(-2px); }
+.featured-wishlist svg { width: 18px; height: 18px; }
+.featured-wishlist svg:last-child { width: 15px; height: 15px; opacity: .85; }
+.featured-more { display: inline-flex; align-items: center; gap: 8px; color: #294c8c; font-size: 13px; font-weight: 800; padding: 10px 2px; }
+.featured-more:hover { color: var(--sky); }
+.featured-more svg { width: 17px; height: 17px; }
+.featured-helper { margin: 12px 0 0; color: #667e99; font-size: 11px; line-height: 1.5; }
+.featured-actions .store-button { flex-grow: 0; }
+.badge--soon { background: #e0fbfe; color: #174675; }
+.detail-release { display: inline-flex; align-items: center; gap: 9px; color: #2b6c9d; font-size: 13px; font-weight: 800; margin-bottom: 12px; }
+.detail-release svg { width: 19px; height: 19px; }
+@media (max-width: 980px) {
+  /* Keep the complete Steam capsule visible instead of cropping it to fit a narrow side column. */
+  .featured-game { grid-template-columns: 1fr; }
+  .featured-cover { height: auto; }
+  .featured-copy { padding: 27px 30px 32px; }
+  .featured-copy h3 { font-size: clamp(29px, 4.5vw, 39px); }
+  .featured-description { max-width: 700px; font-size: 14px; }
+}
+@media (max-width: 760px) {
+  .featured-game { grid-template-columns: 1fr; margin-bottom: 30px; border-radius: 20px; }
+  .featured-cover { height: auto; }
+  .featured-copy { padding: 26px 27px 29px; }
+  .featured-copy h3 { font-size: clamp(30px, 5.3vw, 38px); }
+  .featured-description { font-size: 14px; line-height: 1.7; }
+  .featured-actions { margin-top: 18px; }
+  .featured-wishlist { font-size: 13px; padding: 13px 18px; }
+}
+@media (max-width: 420px) {
+  .featured-copy { padding: 22px 19px 24px; }
+  .featured-copy h3 { font-size: 29px; }
+  .featured-actions { gap: 7px 13px; }
+  .featured-wishlist { width: 100%; }
+  .featured-more { padding: 12px 3px 2px; }
+}
+
 /* Philosophy */
 .values-section { position: relative; background: linear-gradient(140deg, #edfaff, #f2f6ff 76%); padding: 97px 0 102px; scroll-margin-top: 30px; }
 .values-section::before { content: ''; position: absolute; top: -120px; right: -130px; width: 330px; height: 330px; border-radius: 50%; background: rgba(5,240,245,.10); }

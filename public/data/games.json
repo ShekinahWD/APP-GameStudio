@@ -1,6 +1,30 @@
 {
   "games": [
     {
+      "id": "tion-hero-awakening",
+      "title": "TION: Hero Awakening — Idle RPG",
+      "description": "Build your hero, collect gear, upgrade your stats and watch your character fight automatically. Push through tougher enemies, bosses, and new stages in this incremental RPG.",
+      "genre": "Idle RPG · Auto Battler",
+      "tags": [
+        "Idle RPG",
+        "Auto Battler",
+        "Incremental"
+      ],
+      "visible": true,
+      "featured": true,
+      "status": "coming-soon",
+      "releaseDate": "March 2027",
+      "theme": "ember",
+      "icon": "",
+      "cover": "images/games/tion-hero-awakening-cover.webp",
+      "promoCover": "images/games/tion-hero-awakening-promo.webp",
+      "stores": {
+        "playStore": "",
+        "steam": "https://store.steampowered.com/app/4523590/TION_Hero_Awakening_Idle_RPG/",
+        "itch": ""
+      }
+    },
+    {
       "id": "growing-kingdom",
       "title": "Growing Kingdom: RTS",
       "description": "Build a thriving kingdom, command your troops, defend your castle, and conquer rival lands in this incremental real-time strategy adventure.",

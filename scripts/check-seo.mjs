@@ -37,4 +37,14 @@ assert.ok(index.includes('data-prerendered="true"'), 'Homepage not pre-rendered'
 for (const game of visible) {
   assert.ok(index.includes(`href="./games/${game.id}/"`), `Missing link to game page: ${game.id}`);
 }
+const featured = visible.find(game => game.featured === true);
+if (featured) {
+  assert.ok(index.includes('class="featured-game"'), 'Missing featured full-width section');
+  assert.equal((index.match(/class="featured-game"/g) || []).length, 1);
+  assert.equal((index.match(new RegExp(`id="game-${featured.id}"`, 'g')) || []).length, 0, 'Featured game is duplicated in the grid');
+  if (featured.status === 'coming-soon' && featured.stores?.steam) {
+    assert.ok(index.includes('Wishlist on Steam'), 'Missing Steam wishlist CTA');
+    assert.ok(index.includes(featured.stores.steam.replace(/&/g, '&amp;')), 'Steam listing link missing');
+  }
+}
 console.log(`✓ SEO verified: ${pages.length} indexable pages, metadata, structured data and sitemap.`);

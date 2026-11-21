@@ -1,6 +1,6 @@
 type StoreId = 'playStore' | 'steam' | 'itch';
 type SocialId = 'discord' | 'instagram' | 'tiktok' | 'youtube' | 'facebook';
-type GameStatus = 'released' | 'open-beta';
+type GameStatus = 'released' | 'open-beta' | 'coming-soon';
 type Theme = 'meadow' | 'frost' | 'gold' | 'ember' | 'steel';
 type PrincipleIcon = 'heart' | 'shield' | 'smile';
 
@@ -17,7 +17,10 @@ export interface Game {
   genre: string;
   tags?: string[];
   visible: boolean;
+  featured?: boolean; // One visible featured game becomes a full-width banner above the grid.
   status: GameStatus;
+  releaseDate?: string; // Human-readable planned release, such as 'March 2027'.
+  promoCover?: string; // Optional wider promotional art for the banner.
   theme?: Theme;
   icon?: string;
   cover?: string;
@@ -94,6 +97,7 @@ const icon = (name: string): string => {
     heart: '<path d="M20.6 8.4c0 4.9-8.6 10.5-8.6 10.5S3.4 13.3 3.4 8.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8.6 1.1Z"/>',
     shield: '<path d="m12 2 8 3.5v5.7c0 5-3.4 8.2-8 10.8-4.6-2.6-8-5.8-8-10.8V5.5L12 2Z"/><path d="m8.7 11.8 2.4 2.4 4.5-4.7"/>',
     smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14c1.8 2.6 6.2 2.6 8 0M8.5 9.5h.01M15.5 9.5h.01"/>',
+    star: '<path d="m12 2.5 2.9 6.1 6.8 1-4.9 4.8 1.2 6.8-6-3.2-6 3.2 1.2-6.8-4.9-4.8 6.8-1z"/>',
     chevron: '<path d="m9 5 7 7-7 7"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     close: '<path d="M5 5 19 19M19 5 5 19"/>'
@@ -114,13 +118,14 @@ const socialMetadata: Record<SocialId, { name: string; iconName: string }> = {
   facebook: { name: 'Facebook', iconName: 'facebook' }
 };
 
-function storeButtons(stores: StoreLinks, gameTitle: string): string {
+function storeButtons(stores: StoreLinks, gameTitle: string, status: GameStatus = 'released'): string {
   const links = (Object.keys(platformMetadata) as StoreId[]).flatMap((platform) => {
     const url = safeExternalUrl(stores?.[platform]);
     if (!url) return [];
     const { name, iconName } = platformMetadata[platform];
-    return [`<a class="store-button store-button--${platform}" href="${escapeHtml(url)}" ${externalAttrs} aria-label="${escapeHtml(gameTitle)} on ${name}">
-      ${icon(iconName)}<span>${name}</span>${icon('diagonal')}
+    const displayName = platform === 'steam' && status === 'coming-soon' ? 'Wishlist on Steam' : name;
+    return [`<a class="store-button store-button--${platform}" href="${escapeHtml(url)}" ${externalAttrs} aria-label="${escapeHtml(gameTitle)}: ${escapeHtml(displayName)}">
+      ${icon(iconName)}<span>${escapeHtml(displayName)}</span>${icon('diagonal')}
     </a>`];
   });
   return links.length ? links.join('') : '<span class="store-coming">Store link coming soon</span>';
@@ -140,6 +145,7 @@ function cardTemplate(game: Game, index: number): string {
   const fallbackArtIcon = imageUrl(game.icon) || `${BASE}images/brand/blue-icon.png`;
   const theme: Theme = ['meadow', 'frost', 'gold', 'ember', 'steel'].includes(game.theme || '') ? game.theme! : 'frost';
   const beta = game.status === 'open-beta';
+  const comingSoon = game.status === 'coming-soon';
   const tags = (game.tags || []).slice(0, 3).map((tag) => `<span class="game-tag">${escapeHtml(tag)}</span>`).join('');
   return `<article class="game-card theme--${theme}" id="game-${escapeHtml(game.id)}" style="--card-index:${index}">
     <a class="game-art game-art-link" href="${BASE}games/${escapeHtml(game.id)}/" aria-label="Learn more about ${escapeHtml(game.title)}">
@@ -148,6 +154,7 @@ function cardTemplate(game: Game, index: number): string {
       <div class="art-fallback" aria-hidden="true"><img src="${escapeHtml(fallbackArtIcon)}" alt="" loading="lazy"></div>
       ${cover ? `<img class="game-cover" src="${escapeHtml(cover)}" alt="${escapeHtml(game.title)} preview" loading="lazy">` : ''}
       ${beta ? '<span class="badge badge--beta">Open beta</span>' : ''}
+      ${comingSoon ? '<span class="badge badge--soon">Coming soon</span>' : ''}
     </a>
     <div class="game-body">
       <div class="game-title-row">
@@ -159,8 +166,41 @@ function cardTemplate(game: Game, index: number): string {
       </div>
       <p class="game-description">${escapeHtml(game.description)}</p>
       ${tags ? `<div class="game-tags">${tags}</div>` : ''}
-      <div class="game-store-buttons">${storeButtons(game.stores || {}, game.title)}</div>
+      <div class="game-store-buttons">${storeButtons(game.stores || {}, game.title, game.status)}</div>
       <a class="game-details-link" href="${BASE}games/${escapeHtml(game.id)}/">Game details ${icon('arrow')}</a>
+    </div>
+  </article>`;
+}
+
+// A featured game is selected entirely from games.json, never by hardcoded ID.
+// The featured card stays out of the ordinary grid, but keeps its own SEO detail page.
+function featuredTemplate(game: Game): string {
+  const image = imageUrl(game.promoCover || game.cover);
+  const steam = safeExternalUrl(game.stores?.steam);
+  const isWishlist = game.status === 'coming-soon' && Boolean(steam);
+  const details = `${BASE}games/${escapeHtml(game.id)}/`;
+  const tags = (game.tags || []).slice(0, 3).map((tag) => `<span class="game-tag">${escapeHtml(tag)}</span>`).join('');
+  const release = game.status === 'coming-soon' && game.releaseDate
+    ? `<span class="featured-release">${icon('controller')} Planned release: ${escapeHtml(game.releaseDate)}</span>` : '';
+  const mainAction = isWishlist
+    ? `<a class="featured-wishlist" href="${escapeHtml(steam)}" ${externalAttrs} aria-label="Wishlist ${escapeHtml(game.title)} on Steam">${icon('star')} Wishlist on Steam ${icon('diagonal')}</a>`
+    : storeButtons(game.stores || {}, game.title, game.status);
+  return `<article class="featured-game" id="featured-game" aria-labelledby="featured-game-title">
+    <a class="featured-art" href="${details}" aria-label="See ${escapeHtml(game.title)} details">
+      ${image ? `<img class="featured-cover" src="${escapeHtml(image)}" alt="${escapeHtml(game.title)} promotional artwork" loading="eager" fetchpriority="high">` : `<img class="featured-cover" src="${BASE}images/brand/blue-icon.png" alt="" loading="eager">`}
+      <span class="featured-art-corner" aria-hidden="true">${icon('arrow')}</span>
+    </a>
+    <div class="featured-copy">
+      <div class="featured-eyebrow"><span class="featured-pulse" aria-hidden="true"></span>${isWishlist ? 'COMING TO STEAM' : 'FROM OUR GAME COLLECTION'}</div>
+      <h3 id="featured-game-title"><a href="${details}">${escapeHtml(game.title)}</a></h3>
+      <p class="featured-description">${escapeHtml(game.description)}</p>
+      ${tags ? `<div class="featured-tags">${tags}</div>` : ''}
+      ${release}
+      <div class="featured-actions">
+        ${mainAction}
+        <a class="featured-more" href="${details}">Game details ${icon('arrow')}</a>
+      </div>
+      ${isWishlist ? '<p class="featured-helper">Add it to your Steam wishlist to be notified when it launches.</p>' : ''}
     </div>
   </article>`;
 }
@@ -182,6 +222,8 @@ function principleTemplate(principle: Principle): string {
 }
 
 export function mainTemplate(site: SiteConfig, games: Game[]): string {
+  const featured = games.find((game) => game.featured === true);
+  const gridGames = featured ? games.filter((game) => game.id !== featured.id) : games;
   const socials = (Object.keys(socialMetadata) as SocialId[]).flatMap((id) => {
     const url = safeExternalUrl(site.social?.[id]);
     if (!url) return [];
@@ -249,7 +291,8 @@ export function mainTemplate(site: SiteConfig, games: Game[]): string {
             <div><div class="eyebrow">THE GAME COLLECTION</div><h2 id="games-heading">Find something <span>fun to play.</span></h2><p>Different worlds, different adventures. Find your next favorite.</p></div>
             <div class="game-count">${games.length} ${games.length === 1 ? 'game' : 'games'} to discover ${icon('controller')}</div>
           </div>
-          ${games.length ? `<div class="game-grid">${games.map(cardTemplate).join('')}</div>` : '<p class="no-games">New adventures are coming soon.</p>'}
+          ${featured ? featuredTemplate(featured) : ''}
+          ${gridGames.length ? `<div class="game-grid">${gridGames.map(cardTemplate).join('')}</div>` : (featured ? '' : '<p class="no-games">New adventures are coming soon.</p>')}
         </div>
       </section>
 
@@ -295,7 +338,7 @@ export function detailTemplate(site: SiteConfig, game: Game): string {
   const image = imageUrl(game.cover);
   const fallback = imageUrl(game.icon) || `${BASE}images/brand/blue-icon.png`;
   const theme: Theme = ['meadow', 'frost', 'gold', 'ember', 'steel'].includes(game.theme || '') ? game.theme! : 'frost';
-  const badge = game.status === 'open-beta' ? '<span class="badge badge--beta">Open beta</span>' : '';
+  const badge = game.status === 'open-beta' ? '<span class="badge badge--beta">Open beta</span>' : game.status === 'coming-soon' ? '<span class="badge badge--soon">Coming soon</span>' : '';
   return `<div class="site-shell detail-shell" id="top">
     <header class="site-header"><div class="header-inner">
       <a class="brand" href="${BASE}" aria-label="${escapeHtml(site.studioName)} — home"><img src="${logo}" alt="${escapeHtml(site.studioName)}"></a>
@@ -309,7 +352,7 @@ export function detailTemplate(site: SiteConfig, game: Game): string {
           <div class="game-art detail-game-art">
             <div class="art-decor art-decor--one" aria-hidden="true"></div><div class="art-decor art-decor--two" aria-hidden="true"></div>
             <div class="art-fallback" aria-hidden="true"><img src="${escapeHtml(fallback)}" alt=""></div>
-            ${image ? `<img class="game-cover" src="${escapeHtml(image)}" alt="Gameplay preview for ${escapeHtml(game.title)}">` : ''}
+            ${image ? `<img class="game-cover" src="${escapeHtml(image)}" alt="Promotional image for ${escapeHtml(game.title)}">` : ''}
             ${badge}
           </div>
         </div>
@@ -318,9 +361,10 @@ export function detailTemplate(site: SiteConfig, game: Game): string {
           <h1>${escapeHtml(game.title)}</h1>
           <p class="detail-description">${escapeHtml(game.description)}</p>
           ${(game.tags || []).length ? `<div class="game-tags">${(game.tags || []).map(tag => `<span class="game-tag">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
-          <h2>Play ${escapeHtml(game.title)}</h2>
-          <div class="detail-stores game-store-buttons">${storeButtons(game.stores || {}, game.title)}</div>
-          <p class="detail-note">Store buttons appear for the platforms where the game has a listing.</p>
+          ${game.status === 'coming-soon' && game.releaseDate ? `<p class="detail-release">${icon('controller')} Planned release: ${escapeHtml(game.releaseDate)}</p>` : ''}
+          <h2>${game.status === 'coming-soon' ? 'Wishlist' : 'Play'} ${escapeHtml(game.title)}</h2>
+          <div class="detail-stores game-store-buttons">${storeButtons(game.stores || {}, game.title, game.status)}</div>
+          <p class="detail-note">${game.status === 'coming-soon' && safeExternalUrl(game.stores?.steam) ? 'The Steam button opens the store page, where you can add this game to your wishlist.' : 'Store buttons appear for the platforms where the game has a listing.'}</p>
         </div>
       </div>
     </div></main>
